@@ -19,6 +19,8 @@ type Interface interface {
 type Client struct {
 	sync.Mutex
 	servers []string
+	username string
+	password string
 	transport http.RoundTripper
 	maxRetries int
 
@@ -29,11 +31,17 @@ type Client struct {
 
 func New(cfg *Config) (*Client, error) {
 	var conns []*Connection
-	for _, u := range cfg.Servers {
-		if url, err := url.Parse(u);err==nil{
-			conns = append(conns, &Connection{URL: url})
+	for _, server := range cfg.Servers {
+		if u, err := url.Parse(server);err==nil{
+			if cfg.Username!=""{
+				u.User=url.UserPassword(cfg.Username,cfg.Password)
+			}
+			conns = append(conns, &Connection{URL: u})
+		}else{
+			return nil,err
 		}
 	}
+
 	if cfg.MaxRetries<=1{
 		cfg.MaxRetries=1
 	}
@@ -43,6 +51,8 @@ func New(cfg *Config) (*Client, error) {
 	client := Client{
 		servers: cfg.Servers,
 		transport:cfg.Transport,
+		username: cfg.Username,
+		password: cfg.Password,
 		maxRetries:cfg.MaxRetries,
 	}
 	if client.poolFunc != nil {
@@ -71,7 +81,7 @@ func (c *Client) Perform(req *http.Request) (*http.Response, error){
 		}
 	}
 
-	for i := 1; i <= c.maxRetries; i++ {
+	for i := 0; i <= c.maxRetries; i++ {
 		var (
 			conn            *Connection
 			shouldRetry     bool
@@ -87,7 +97,7 @@ func (c *Client) Perform(req *http.Request) (*http.Response, error){
 			return nil, fmt.Errorf("cannot get connection: %s", err)
 		}
 		c.setReqURL(conn.URL, req)
-		//c.setReqAuth(conn.URL, req)
+		c.setReqAuth(conn.URL, req)
 		if i > 1 && req.Body != nil && req.Body != http.NoBody {
 			body, err := req.GetBody()
 			if err != nil {
@@ -133,5 +143,16 @@ func (c *Client) setReqURL(u *url.URL, req *http.Request) *http.Request {
 		req.URL.Path = b.String()
 	}
 
+	return req
+}
+
+func (c *Client)setReqAuth(u *url.URL,req *http.Request) *http.Request{
+	if _, ok := req.Header["Authorization"]; !ok {
+		if u.User!=nil{
+			pwd,_:=u.User.Password()
+			req.SetBasicAuth(u.User.Username(),pwd)
+			return req
+		}
+	}
 	return req
 }

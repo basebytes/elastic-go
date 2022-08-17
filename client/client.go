@@ -1,4 +1,5 @@
 package client
+
 import (
 	"github.com/basebytes/elastic-go/client/api"
 	"github.com/basebytes/elastic-go/client/transport"
@@ -14,12 +15,14 @@ const (
 )
 
 type Config struct {
-	Servers []string
-	MaxRetries int
-	Transport http.RoundTripper
+	Servers            []string
+	Username           string
+	Password           string
+	MaxRetries         int
+	Transport          http.RoundTripper
 	ConnectionPoolFunc func([]*transport.Connection, transport.Selector) transport.ConnectionPool
-	pool      transport.ConnectionPool
-	selector  transport.Selector
+	pool               transport.ConnectionPool
+	selector           transport.Selector
 }
 
 type Client struct {
@@ -33,20 +36,21 @@ func NewDefaultClient() (*Client, error) {
 
 func NewClient(cfg *Config) (*Client, error) {
 	var addrs []string
-	if len(cfg.Servers)==0{
+	if len(cfg.Servers) == 0 {
 		addrs = addrsFromEnvironment()
-	}else{
+	} else {
 		addrs = append(addrs, cfg.Servers...)
 	}
-	if len(addrs)==0{
-		addrs=append(addrs, defaultURL)
+	if len(addrs) == 0 {
+		addrs = append(addrs, defaultURL)
 	}
-	if cfg.MaxRetries<=1{
-		cfg.MaxRetries=1
+	if cfg.MaxRetries <= 1 {
+		cfg.MaxRetries = 1
 	}
-
 	tp, err := transport.New(&transport.Config{
 		Servers:            addrs,
+		Username:           cfg.Username,
+		Password:           cfg.Password,
 		MaxRetries:         cfg.MaxRetries,
 		Transport:          cfg.Transport,
 		ConnectionPoolFunc: cfg.ConnectionPoolFunc,
