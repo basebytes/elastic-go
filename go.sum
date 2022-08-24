@@ -1,5 +1,7 @@
 github.com/basebytes/elastic-go/client v0.0.2 h1:sNJfxFywobYa1vQ3vEygyTuvvTubeLG3K7OH2RvFR5k=
 github.com/basebytes/elastic-go/client v0.0.2/go.mod h1:4UtAoGRhAc/99Q+uBa7NkOoQ5b65TSkzxT5rLeXPVKM=
+github.com/basebytes/elastic-go/client v0.0.3 h1:kIkepEqtDAY/nrbGKxKtrqj002eP0X1lTh5oZWzYdkU=
+github.com/basebytes/elastic-go/client v0.0.3/go.mod h1:4UtAoGRhAc/99Q+uBa7NkOoQ5b65TSkzxT5rLeXPVKM=
 github.com/basebytes/tools v0.0.1 h1:rI1dpGZYc7XcPUIU+8KjrSUMhs5FMZSKhSAKvR5rPjE=
 github.com/basebytes/tools v0.0.1/go.mod h1:Uz4WLiy9OlbgFwpU+nSapv6wB98VR5+VHibVJ2djuzs=
 github.com/mitchellh/mapstructure v1.4.1 h1:CpVNEelQCZBooIPDn+AR3NpivK/TIKU8bDxdASFVQag=
