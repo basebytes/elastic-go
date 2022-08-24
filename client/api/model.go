@@ -14,6 +14,7 @@ type BulkAction struct {
 }
 
 type BulkItem struct {
-	Index string `json:"_index,omitempty"`
-	Id    string `json:"_id,omitempty"`
+	Index           string `json:"_index,omitempty"`
+	Id              string `json:"_id,omitempty"`
+	RetryOnConflict int    `json:"retry_on_conflict,omitempty"`
 }

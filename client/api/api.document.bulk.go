@@ -11,20 +11,20 @@ func newDocumentBulkFunc(transport Transport) DocumentBulk {
 		r := DocumentBulkRequest{BaseRequest{
 			method: MethodPostFunc,
 		}}
-		r.uris=r.getUris
+		r.uris = r.getUris
 		for _, f := range o {
 			f(&r)
 		}
 		var buffer bytes.Buffer
-		for _,doc:=range docs{
-			if doc.BulkAction().Delete!=nil{
-				buffer.WriteString(fmt.Sprintf("%s\n",tools.EncodeBytes(doc.BulkAction())))
-			}else{
-				buffer.WriteString(fmt.Sprintf("%s\n%s\n",tools.EncodeBytes(doc.BulkAction()),doc.Content()))
+		for _, doc := range docs {
+			if doc.BulkAction().Delete != nil {
+				buffer.WriteString(fmt.Sprintf("%s\n", tools.EncodeBytes(doc.BulkAction())))
+			} else {
+				buffer.WriteString(fmt.Sprintf("%s\n%s\n", tools.EncodeBytes(doc.BulkAction()), doc.Content()))
 			}
 		}
-		body:=buffer.Bytes()
-		r.Body=&body
+		body := buffer.Bytes()
+		r.Body = &body
 		return r.Do(r.ctx, transport)
 	}
 }
@@ -33,9 +33,15 @@ type DocumentBulk func(docs []Doc, o ...func(*DocumentBulkRequest)) (*Response, 
 
 func (f DocumentBulk) WithIndex(v string) func(*DocumentBulkRequest) {
 	return func(r *DocumentBulkRequest) {
-		if v!=""{
+		if v != "" {
 			r.Index = v
 		}
+	}
+}
+
+func (f DocumentBulk) WithFilterPath(filterPath string) func(request *DocumentBulkRequest) {
+	return func(r *DocumentBulkRequest) {
+		r.AddParam("filter_path", filterPath)
 	}
 }
 
