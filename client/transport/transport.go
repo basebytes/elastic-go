@@ -18,42 +18,43 @@ type Interface interface {
 
 type Client struct {
 	sync.Mutex
-	servers []string
-	username string
-	password string
-	transport http.RoundTripper
+	servers    []string
+	username   string
+	password   string
+	transport  http.RoundTripper
 	maxRetries int
 
 	poolFunc func([]*Connection, Selector) ConnectionPool
-	pool      ConnectionPool
-	selector  Selector
+	pool     ConnectionPool
+	selector Selector
 }
 
 func New(cfg *Config) (*Client, error) {
 	var conns []*Connection
 	for _, server := range cfg.Servers {
-		if u, err := url.Parse(server);err==nil{
-			if cfg.Username!=""{
-				u.User=url.UserPassword(cfg.Username,cfg.Password)
+		if u, err := url.Parse(server); err == nil {
+			if cfg.Username != "" {
+				u.User = url.UserPassword(cfg.Username, cfg.Password)
 			}
 			conns = append(conns, &Connection{URL: u})
-		}else{
-			return nil,err
+		} else {
+			return nil, err
 		}
 	}
 
-	if cfg.MaxRetries<=1{
-		cfg.MaxRetries=1
+	if cfg.MaxRetries <= 1 {
+		cfg.MaxRetries = 1
 	}
-	if cfg.Transport==nil{
-		cfg.Transport=http.DefaultTransport
+	if cfg.Transport == nil {
+		cfg.Transport = http.DefaultTransport
 	}
+
 	client := Client{
-		servers: cfg.Servers,
-		transport:cfg.Transport,
-		username: cfg.Username,
-		password: cfg.Password,
-		maxRetries:cfg.MaxRetries,
+		servers:    cfg.Servers,
+		transport:  cfg.Transport,
+		username:   cfg.Username,
+		password:   cfg.Password,
+		maxRetries: cfg.MaxRetries,
 	}
 	if client.poolFunc != nil {
 		client.pool = client.poolFunc(conns, client.selector)
@@ -63,8 +64,7 @@ func New(cfg *Config) (*Client, error) {
 	return &client, nil
 }
 
-
-func (c *Client) Perform(req *http.Request) (*http.Response, error){
+func (c *Client) Perform(req *http.Request) (*http.Response, error) {
 	var (
 		res *http.Response
 		err error
@@ -83,8 +83,8 @@ func (c *Client) Perform(req *http.Request) (*http.Response, error){
 
 	for i := 0; i <= c.maxRetries; i++ {
 		var (
-			conn            *Connection
-			shouldRetry     bool
+			conn        *Connection
+			shouldRetry bool
 			//shouldCloseBody bool
 		)
 		c.Lock()
@@ -119,7 +119,7 @@ func (c *Client) Perform(req *http.Request) (*http.Response, error){
 			if err, ok := err.(net.Error); ok {
 				shouldRetry = !err.Timeout()
 			}
-		}else{
+		} else {
 			c.Lock()
 			c.pool.OnSuccess(conn)
 			c.Unlock()
@@ -128,7 +128,7 @@ func (c *Client) Perform(req *http.Request) (*http.Response, error){
 			break
 		}
 	}
-	return res,err
+	return res, err
 }
 
 func (c *Client) setReqURL(u *url.URL, req *http.Request) *http.Request {
@@ -146,11 +146,11 @@ func (c *Client) setReqURL(u *url.URL, req *http.Request) *http.Request {
 	return req
 }
 
-func (c *Client)setReqAuth(u *url.URL,req *http.Request) *http.Request{
+func (c *Client) setReqAuth(u *url.URL, req *http.Request) *http.Request {
 	if _, ok := req.Header["Authorization"]; !ok {
-		if u.User!=nil{
-			pwd,_:=u.User.Password()
-			req.SetBasicAuth(u.User.Username(),pwd)
+		if u.User != nil {
+			pwd, _ := u.User.Password()
+			req.SetBasicAuth(u.User.Username(), pwd)
 			return req
 		}
 	}

@@ -25,20 +25,22 @@ type BaseRequest struct {
 	Body   *[]byte
 	params map[string]string
 
-	ctx context.Context
-	uris func() []string
+	ctx    context.Context
+	uris   func() []string
 	method func() string
 }
 
 func (b *BaseRequest) Do(ctx context.Context, transport Transport) (*Response, error) {
-	httpRequest,err:=http.NewRequest(b.getMethod(),strings.Join(b.getUris(),"/"),nil)
+	httpRequest, err := http.NewRequest(b.getMethod(), strings.Join(b.getUris(), "/"), nil)
 	b.addParams(httpRequest)
+
+	//Accept+";compatible-with=7"
 	if err != nil {
 		return nil, err
-	}else if ctx != nil {
-		httpRequest=httpRequest.WithContext(ctx)
-	}else if b.Body!=nil{
-		httpRequest.Body=ioutil.NopCloser(bytes.NewReader(*b.Body))
+	} else if ctx != nil {
+		httpRequest = httpRequest.WithContext(ctx)
+	} else if b.Body != nil {
+		httpRequest.Body = ioutil.NopCloser(bytes.NewReader(*b.Body))
 		httpRequest.Header.Add(headerContentType, headerContentTypeJSONUtf8)
 	}
 
@@ -46,7 +48,7 @@ func (b *BaseRequest) Do(ctx context.Context, transport Transport) (*Response, e
 	if err != nil {
 		return nil, err
 	}
-	if res.Body !=nil{
+	if res.Body != nil {
 		defer res.Body.Close()
 	}
 	var rspData []byte
@@ -61,7 +63,7 @@ func (b *BaseRequest) Do(ctx context.Context, transport Transport) (*Response, e
 	if err != nil {
 		return nil, err
 	}
-	return &Response{Response: res,rspData: rspData,req: httpRequest}, err
+	return &Response{Response: res, rspData: rspData, req: httpRequest}, err
 }
 
 func (b *BaseRequest) addParams(req *http.Request) {
@@ -71,7 +73,7 @@ func (b *BaseRequest) addParams(req *http.Request) {
 			if k == "method" {
 				continue
 			}
-			q.Set(k,v)
+			q.Set(k, v)
 			//req.Param(k, v)
 		}
 		req.URL.RawQuery = q.Encode()
@@ -90,17 +92,15 @@ func (b *BaseRequest) AddParam(key, value string) {
 }
 
 func (b *BaseRequest) getMethod() string {
-	if b.method==nil{
+	if b.method == nil {
 		return MethodGetFunc()
 	}
 	return b.method()
 }
 
 func (b *BaseRequest) getUris() []string {
-	if b.uris==nil{
+	if b.uris == nil {
 		return []string{b.Index}
 	}
 	return b.uris()
 }
-
-
