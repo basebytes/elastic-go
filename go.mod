@@ -1,5 +1,7 @@
 module github.com/basebytes/elastic-go
 
-go 1.16
+require (
+	github.com/basebytes/tools v0.0.2
+)
 
-replace github.com/basebytes/elastic-go/service v0.0.3 => ./service
+go 1.16
