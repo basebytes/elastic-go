@@ -55,6 +55,8 @@ type Bucket struct {
 	Filters          Filters
 	NestedAgg        NestedAgg
 	ReverseNestedAgg ReverseNestedAgg
+	Histogram        Histogram
+	RangeAgg         RangeAgg
 }
 
 type Metrics struct {
@@ -105,6 +107,8 @@ func New() *Constructor {
 				Filters:          newFilters(),
 				NestedAgg:        newNestedAgg(),
 				ReverseNestedAgg: newReverseNestedAgg(),
+				Histogram:        newHistogram(),
+				RangeAgg:         newRangeAgg(),
 			},
 			Metrics: Metrics{
 				Sum:         newSum(),

@@ -25,9 +25,15 @@ type AggregationsResult struct {
 }
 
 type BucketItem struct {
-	Key      string       `mapstructure:"key"`
-	DocCount int64        `mapstructure:"doc_count"`
-	Aggs     Aggregations `mapstructure:",remain"`
+	Key       string       `mapstructure:"key"`
+	DocCount  int64        `mapstructure:"doc_count"`
+	RangeData RangeData    `mapstructure:",squash,omitempty"`
+	Aggs      Aggregations `mapstructure:",remain"`
+}
+
+type RangeData struct {
+	From float64
+	To   float64
 }
 
 // MetricsAggTopHits
