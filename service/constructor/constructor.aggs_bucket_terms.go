@@ -37,6 +37,15 @@ func (t TermsAgg) WithChildAgg(agg map[string]interface{}) func(*TermsAggParam) 
 	}
 }
 
+func (t TermsAgg) WithMissingValue(value interface{}) func(*TermsAggParam) {
+	return func(p *TermsAggParam) {
+		if value == nil {
+			return
+		}
+		p.param["missing"] = value
+	}
+}
+
 type TermsAggParam struct {
 	param map[string]interface{}
 	aggs  map[string]interface{}

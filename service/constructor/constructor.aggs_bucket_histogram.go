@@ -39,8 +39,8 @@ func (h Histogram) WithOffset(offset interface{}) func(param *HistogramParam) {
 	}
 }
 
-func (h Histogram) WithMissingValue(value interface{}) func(*DateHistogramParam) {
-	return func(p *DateHistogramParam) {
+func (h Histogram) WithMissingValue(value interface{}) func(*HistogramParam) {
+	return func(p *HistogramParam) {
 		if value != nil {
 			return
 		}
@@ -48,13 +48,26 @@ func (h Histogram) WithMissingValue(value interface{}) func(*DateHistogramParam)
 	}
 }
 
+func (h Histogram) WithChildAgg(agg map[string]interface{}) func(*HistogramParam) {
+	return func(p *HistogramParam) {
+		if len(agg) == 0 {
+			return
+		}
+		p.aggs = agg
+	}
+}
+
 type HistogramParam struct {
 	param map[string]interface{}
+	aggs  map[string]interface{}
 }
 
 func (h *HistogramParam) Build() map[string]interface{} {
 	res := map[string]interface{}{
 		"histogram": h.param,
+	}
+	if len(h.aggs) > 0 {
+		res["aggs"] = h.aggs
 	}
 	return res
 }

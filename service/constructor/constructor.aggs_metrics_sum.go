@@ -22,6 +22,9 @@ type Sum func(field string, o ...func(*SumParam)) map[string]interface{}
 // 不做合法性校验
 func (s Sum) WithMissingValue(value interface{}) func(*SumParam) {
 	return func(p *SumParam) {
+		if value == nil {
+			return
+		}
 		p.param["missing"] = value
 	}
 }

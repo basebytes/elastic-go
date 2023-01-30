@@ -35,6 +35,9 @@ func (c Cardinality) WithPrecisionThreshold(value int) func(*CardinalityParam) {
 
 func (c Cardinality) WithMissingValue(value interface{}) func(*CardinalityParam) {
 	return func(p *CardinalityParam) {
+		if value == nil {
+			return
+		}
 		p.param["missing"] = value
 	}
 }

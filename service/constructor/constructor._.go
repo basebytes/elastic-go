@@ -17,10 +17,11 @@ type Compound struct {
 }
 
 type TermLevel struct {
-	Term  Term
-	Terms Terms
-	Range Range
-	Ids   IDS
+	Term   Term
+	Terms  Terms
+	Range  Range
+	Ids    IDS
+	Exists Exists
 }
 
 type FullText struct {
@@ -78,10 +79,11 @@ func New() *Constructor {
 			DisjunctionMax: newDisjunctionMax(),
 		},
 		TermLevel: &TermLevel{
-			Term:  newTerm(),
-			Terms: newTerms(),
-			Range: newRange(),
-			Ids:   newIDS(),
+			Term:   newTerm(),
+			Terms:  newTerms(),
+			Range:  newRange(),
+			Ids:    newIDS(),
+			Exists: newExists(),
 		},
 		FullText: &FullText{
 			Match:             newMatch(),
