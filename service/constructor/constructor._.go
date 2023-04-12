@@ -1,47 +1,56 @@
 package constructor
 
+import (
+	"github.com/basebytes/elastic-go/service/constructor/aggregations"
+	"github.com/basebytes/elastic-go/service/constructor/query"
+)
+
 type Constructor struct {
-	Compound  *Compound
-	TermLevel *TermLevel
-	FullText  *FullText
-	Join      *Join
-	Common    *Common
-	Aggs      *Aggregations
+	Compound    *Compound
+	TermLevel   *TermLevel
+	FullText    *FullText
+	Join        *Join
+	Common      *Common
+	Specialized *Specialized
+	Aggs        *Aggregations
 }
 
 type Compound struct {
-	Bool           Bool
-	Boosting       Boosting
-	ConstantScore  ConstantScore
-	DisjunctionMax DisjunctionMax
+	Bool           query.Bool
+	Boosting       query.Boosting
+	ConstantScore  query.ConstantScore
+	DisjunctionMax query.DisjunctionMax
 }
 
 type TermLevel struct {
-	Term   Term
-	Terms  Terms
-	Range  Range
-	Ids    IDS
-	Exists Exists
+	Term   query.Term
+	Terms  query.Terms
+	Range  query.Range
+	Ids    query.IDS
+	Exists query.Exists
 }
 
 type FullText struct {
-	Match             Match
-	MatchAll          MatchAll
-	MatchBoolPrefix   MatchBoolPrefix
-	MatchPhrase       MatchPhrase
-	MatchPhrasePrefix MatchPhrasePrefix
-	CombinedFields    CombinedFields
-	MultiMatch        MultiMatch
-	SimpleQueryString SimpleQueryString
+	Match             query.Match
+	MatchAll          query.MatchAll
+	MatchBoolPrefix   query.MatchBoolPrefix
+	MatchPhrase       query.MatchPhrase
+	MatchPhrasePrefix query.MatchPhrasePrefix
+	CombinedFields    query.CombinedFields
+	MultiMatch        query.MultiMatch
+	SimpleQueryString query.SimpleQueryString
 }
 
 type Join struct {
-	Nested Nested
+	Nested query.Nested
 }
 
+type Specialized struct {
+	Script query.Script
+}
 type Common struct {
-	Sort   Sort
-	Source Source
+	Sort   query.Sort
+	Source query.Source
 }
 
 type Aggregations struct {
@@ -51,74 +60,77 @@ type Aggregations struct {
 }
 
 type Bucket struct {
-	DateHistogram    DateHistogram
-	TermsAgg         TermsAgg
-	Filters          Filters
-	NestedAgg        NestedAgg
-	ReverseNestedAgg ReverseNestedAgg
-	Histogram        Histogram
-	RangeAgg         RangeAgg
+	DateHistogram aggregations.DateHistogram
+	Terms         aggregations.Terms
+	Filters       aggregations.Filters
+	Nested        aggregations.Nested
+	ReverseNested aggregations.ReverseNested
+	Histogram     aggregations.Histogram
+	Range         aggregations.Range
 }
 
 type Metrics struct {
-	Sum         Sum
-	Cardinality Cardinality
+	Sum         aggregations.Sum
+	Cardinality aggregations.Cardinality
 }
 
 type Pipeline struct {
-	Script    Script
-	SumBucket SumBucket
+	Script    aggregations.Script
+	SumBucket aggregations.SumBucket
 }
 
 func New() *Constructor {
 	return &Constructor{
 		Compound: &Compound{
-			Bool:           newBool(),
-			Boosting:       newBoosting(),
-			ConstantScore:  newConstantScore(),
-			DisjunctionMax: newDisjunctionMax(),
+			Bool:           query.NewBool(),
+			Boosting:       query.NewBoosting(),
+			ConstantScore:  query.NewConstantScore(),
+			DisjunctionMax: query.NewDisjunctionMax(),
 		},
 		TermLevel: &TermLevel{
-			Term:   newTerm(),
-			Terms:  newTerms(),
-			Range:  newRange(),
-			Ids:    newIDS(),
-			Exists: newExists(),
+			Term:   query.NewTerm(),
+			Terms:  query.NewTerms(),
+			Range:  query.NewRange(),
+			Ids:    query.NewIDS(),
+			Exists: query.NewExists(),
 		},
 		FullText: &FullText{
-			Match:             newMatch(),
-			MatchAll:          newMatchAll(),
-			MatchBoolPrefix:   newMatchBoolPrefix(),
-			MatchPhrase:       newMatchPhrase(),
-			MatchPhrasePrefix: newMatchPhrasePrefix(),
-			CombinedFields:    newCombinedFields(),
-			MultiMatch:        newMultiMatch(),
-			SimpleQueryString: newSimpleQueryString(),
+			Match:             query.NewMatch(),
+			MatchAll:          query.NewMatchAll(),
+			MatchBoolPrefix:   query.NewMatchBoolPrefix(),
+			MatchPhrase:       query.NewMatchPhrase(),
+			MatchPhrasePrefix: query.NewMatchPhrasePrefix(),
+			CombinedFields:    query.NewCombinedFields(),
+			MultiMatch:        query.NewMultiMatch(),
+			SimpleQueryString: query.NewSimpleQueryString(),
 		},
 		Join: &Join{
-			Nested: newNested(),
+			Nested: query.NewNested(),
 		},
 		Common: &Common{
-			Sort:   NewSort(),
-			Source: NewSource(),
+			Sort:   query.NewSort(),
+			Source: query.NewSource(),
+		},
+		Specialized: &Specialized{
+			Script: query.NewScript(),
 		},
 		Aggs: &Aggregations{
 			Bucket: Bucket{
-				DateHistogram:    newDateHistogram(),
-				TermsAgg:         newTermsAgg(),
-				Filters:          newFilters(),
-				NestedAgg:        newNestedAgg(),
-				ReverseNestedAgg: newReverseNestedAgg(),
-				Histogram:        newHistogram(),
-				RangeAgg:         newRangeAgg(),
+				DateHistogram: aggregations.NewDateHistogram(),
+				Terms:         aggregations.NewTerms(),
+				Filters:       aggregations.NewFilters(),
+				Nested:        aggregations.NewNested(),
+				ReverseNested: aggregations.NewReverseNested(),
+				Histogram:     aggregations.NewHistogram(),
+				Range:         aggregations.NewRange(),
 			},
 			Metrics: Metrics{
-				Sum:         newSum(),
-				Cardinality: newCardinality(),
+				Sum:         aggregations.NewSum(),
+				Cardinality: aggregations.NewCardinality(),
 			},
 			Pipeline: Pipeline{
-				Script:    newScript(),
-				SumBucket: newSumBucket(),
+				Script:    aggregations.NewScript(),
+				SumBucket: aggregations.NewSumBucket(),
 			},
 		},
 	}

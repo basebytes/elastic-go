@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	dateFormat = "20060102"
-	indexAlias = "test"
-	testTableJson=`{
+	dateFormat    = "20060102"
+	indexAlias    = "test"
+	testTableJson = `{
   "settings": {
     "index": {
       "number_of_shards": 1,
@@ -56,71 +56,78 @@ const (
 )
 
 var (
-	dateStr=time.Now().Format(dateFormat)
-	currentIndexName= indexAlias + dateStr
+	dateStr          = time.Now().Format(dateFormat)
+	currentIndexName = indexAlias + dateStr
 
-	err error
+	err      error
 	esClient *client.Client
 	Document *api.Document
-	Index *api.Indexer
+	Index    *api.Indexer
 	Searcher *api.Searcher
 
 	Service *service.Service
 
-	TermLevel *constructor.TermLevel
-	Compound *constructor.Compound
-	FullText *constructor.FullText
-	Join *constructor.Join
+	TermLevel   *constructor.TermLevel
+	Compound    *constructor.Compound
+	FullText    *constructor.FullText
+	Join        *constructor.Join
+	Specialized *constructor.Specialized
 )
 
-func init(){
-	esClient, err =client.NewDefaultClient()
-	if err !=nil{
+func init() {
+	esClient, err = client.NewDefaultClient()
+	if err != nil {
 		panic(err)
 	}
 	Document = esClient.Document
 	Index = esClient.Indexer
 	Searcher = esClient.Searcher
-	Service,err= service.NewDefaultService()
-	if err!=nil{
+	Service, err = service.NewDefaultService()
+	if err != nil {
 		panic(err)
 	}
-	TermLevel =Service.Constructor.TermLevel
-	Compound =Service.Constructor.Compound
-	FullText =Service.Constructor.FullText
-	Join =Service.Constructor.Join
+	TermLevel = Service.Constructor.TermLevel
+	Compound = Service.Constructor.Compound
+	FullText = Service.Constructor.FullText
+	Join = Service.Constructor.Join
+	Specialized = Service.Constructor.Specialized
 }
 
-type TestDoc struct{
-	Id string `json:"id,omitempty"`
-	Title string `json:"title,omitempty"`
-	Published int64 `json:"published,omitempty"`
-	Duration int32 `json:"duration,omitempty"`
-	Keywords []string `json:"keywords,omitempty"`
-	action string `json:"-"`
-	index string `json:"-"`
+type TestDoc struct {
+	Id        string   `json:"id,omitempty"`
+	Title     string   `json:"title,omitempty"`
+	Published int64    `json:"published,omitempty"`
+	Duration  int32    `json:"duration,omitempty"`
+	Keywords  []string `json:"keywords,omitempty"`
+	action    string   `json:"-"`
+	index     string   `json:"-"`
 }
 
-func (t *TestDoc)BulkAction() *api.BulkAction{
-	action:=&api.BulkAction{}
-	actionItem:=&api.BulkItem{
+func (t *TestDoc) BulkAction() *api.BulkAction {
+	action := &api.BulkAction{}
+	actionItem := &api.BulkItem{
 		Index: t.index,
 		Id:    t.Id,
 	}
 	switch t.action {
-	case "create":action.Create=actionItem
-	case "delete":action.Delete=actionItem
-	case "index":action.Index=actionItem
-	case "update":action.Update=actionItem
-	default:return nil
+	case "create":
+		action.Create = actionItem
+	case "delete":
+		action.Delete = actionItem
+	case "index":
+		action.Index = actionItem
+	case "update":
+		action.Update = actionItem
+	default:
+		return nil
 	}
 	return action
 }
 
-func (t *TestDoc)Content() []byte{
+func (t *TestDoc) Content() []byte {
 	return tools.EncodeBytes(t)
 }
 
-func (t *TestDoc)GetUUID() string{
+func (t *TestDoc) GetUUID() string {
 	return t.Id
 }
