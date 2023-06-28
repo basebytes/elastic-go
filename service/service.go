@@ -2,12 +2,10 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/basebytes/elastic-go/client"
 	"github.com/basebytes/elastic-go/client/api"
 	"github.com/basebytes/elastic-go/client/entity"
 	"github.com/basebytes/elastic-go/service/constructor"
-	"github.com/basebytes/tools"
 	"net/http"
 	"sort"
 	"strings"
@@ -164,7 +162,6 @@ func (service *Service) UpdateIndexAlias(actions ...*api.AliasAction) (*entity.O
 		result  *entity.OperateResult
 		aliases = service.client.Indexer.Aliases
 	)
-	fmt.Println(tools.Encode(actions))
 	if rsp, err = aliases(actions); err == nil {
 		result = new(entity.OperateResult)
 		err = rsp.Result(result)

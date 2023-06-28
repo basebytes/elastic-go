@@ -1,9 +1,9 @@
 package aggregations
 
-func NewScript() Script {
+func NewSelector() Selector {
 	return func(path map[string]string, script interface{}) map[string]interface{} {
 		return map[string]interface{}{
-			"bucket_script": map[string]interface{}{
+			"bucket_selector": map[string]interface{}{
 				"buckets_path": path,
 				"script":       script,
 			},
@@ -11,4 +11,4 @@ func NewScript() Script {
 	}
 }
 
-type Script func(path map[string]string, script interface{}) map[string]interface{}
+type Selector func(path map[string]string, script interface{}) map[string]interface{}

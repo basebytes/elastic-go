@@ -62,6 +62,7 @@ type Aggregations struct {
 type Bucket struct {
 	DateHistogram aggregations.DateHistogram
 	Terms         aggregations.Terms
+	Filter        aggregations.Filter
 	Filters       aggregations.Filters
 	Nested        aggregations.Nested
 	ReverseNested aggregations.ReverseNested
@@ -70,12 +71,15 @@ type Bucket struct {
 }
 
 type Metrics struct {
-	Sum         aggregations.Sum
 	Cardinality aggregations.Cardinality
+	Sum         aggregations.Sum
+	ValueCount  aggregations.ValueCount
 }
 
 type Pipeline struct {
 	Script    aggregations.Script
+	Selector  aggregations.Selector
+	Sort      aggregations.Sort
 	SumBucket aggregations.SumBucket
 }
 
@@ -118,6 +122,7 @@ func New() *Constructor {
 			Bucket: Bucket{
 				DateHistogram: aggregations.NewDateHistogram(),
 				Terms:         aggregations.NewTerms(),
+				Filter:        aggregations.NewFilter(),
 				Filters:       aggregations.NewFilters(),
 				Nested:        aggregations.NewNested(),
 				ReverseNested: aggregations.NewReverseNested(),
@@ -125,11 +130,14 @@ func New() *Constructor {
 				Range:         aggregations.NewRange(),
 			},
 			Metrics: Metrics{
-				Sum:         aggregations.NewSum(),
 				Cardinality: aggregations.NewCardinality(),
+				Sum:         aggregations.NewSum(),
+				ValueCount:  aggregations.NewValueCount(),
 			},
 			Pipeline: Pipeline{
 				Script:    aggregations.NewScript(),
+				Selector:  aggregations.NewSelector(),
+				Sort:      aggregations.NewSort(),
 				SumBucket: aggregations.NewSumBucket(),
 			},
 		},

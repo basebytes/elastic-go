@@ -28,6 +28,12 @@ func (t Terms) WithSize(size int) func(param *TermsParam) {
 	}
 }
 
+func (t Terms) WithMinDocCount(count int) func(param *TermsParam) {
+	return func(p *TermsParam) {
+		p.param["min_doc_count"] = count
+	}
+}
+
 func (t Terms) WithChildAgg(agg map[string]interface{}) func(*TermsParam) {
 	return func(p *TermsParam) {
 		if len(agg) == 0 {
