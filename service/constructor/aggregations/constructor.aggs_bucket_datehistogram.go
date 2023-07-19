@@ -63,9 +63,9 @@ func (d DateHistogram) WithOffset(offset string) func(*DateHistogramParam) {
 	}
 }
 
-func (d DateHistogram) WithMissingValue(value string) func(*DateHistogramParam) {
+func (d DateHistogram) WithMissingValue(value interface{}) func(*DateHistogramParam) {
 	return func(p *DateHistogramParam) {
-		if value == "" {
+		if value == nil {
 			return
 		}
 		p.param["missing"] = value
